@@ -1,8 +1,6 @@
 ---
 theme: default
-title: Verified Controller Planning with Provengo
-info: |
-  An evidence-backed replay of a fresh-agent controller synthesis experiment.
+title: Provengo-verified REST Recovery
 transition: fade-out
 mdc: true
 colorSchema: dark
@@ -11,119 +9,75 @@ fonts:
   mono: JetBrains Mono
 ---
 
-<div class="title-kicker">FRESH-AGENT EXPERIMENT · WAREHOUSE ROBOTICS</div>
+<div class="title-kicker">ADVERSARIAL REST ORCHESTRATION</div>
 
-# Provengo turns controller ideas into claims we can test
+# A retry that looks reasonable can still lose
 
-<div class="title-sub">A counterexample-guided path from event stories to a bounded winning strategy</div>
+<div class="title-sub">Provengo turns HTTP status choices into a finite game, finds the failure, and verifies the repaired recovery policy.</div>
 
-<div class="title-proof">verification_mode · aec262a0 · depth 20</div>
-
-<!--
-[Sources]
-- Local experiment: runs/fresh-agent-002/strategy.md
--->
+<div class="title-proof">verification_mode · REST contract · depth 24</div>
 
 ---
 
-# The controller plays against every legal response
+# The API contract is the behavioral model
 
 <div class="game-contract">
-  <div class="actor system"><span>SYSTEM</span><b>selects one robot event</b></div>
+  <div class="actor system"><span>CONTROLLER</span><b>sends one HTTP request</b></div>
   <div class="turn-arrow">→</div>
-  <div class="actor environment"><span>ENVIRONMENT</span><b>selects any legal response</b></div>
+  <div class="actor environment"><span>SERVER</span><b>selects any legal status</b></div>
   <div class="turn-arrow">→</div>
-  <div class="actor goal"><span>GOAL</span><b>deliver safely by event 9</b></div>
+  <div class="actor goal"><span>GOAL</span><b>commit within 9 requests</b></div>
 </div>
 
-<div class="claim">A favorable simulation is insufficient. The strategy must survive the worst legal event selection.</div>
-
-<!--
-[Sources]
-- Benchmark: skills/provengo-controller-planner/references/warehouse-corridor-challenge.md
--->
+<div class="claim">The server may choose one 503 and one 401. Refreshing authentication invalidates every older backup session.</div>
 
 ---
 
-# Verification found a defect before it became evidence
+# The naive recovery reuses invalid state
 
-<WarehouseTrace src="/traces/monitor-failure.json" accent="#ff6b6b" />
+<RestTrace src="/traces/naive-failure.json" accent="#ff6b6b" />
 
-<div class="footnote">The failure was in the independent turn monitor—not in the controller. That distinction came from replaying the counterexample.</div>
-
-<!--
-[Sources]
-- Local verifier report: runs/fresh-agent-002/verification-final.html
--->
+<div class="footnote">Counterexample selected by Provengo: return 401 only after chunk 1 is safely stored, then reject commit with 409.</div>
 
 ---
 
-# The counterexample led to a minimal repair
+# The fix changes the strategy—not the server
 
 <div class="repair-flow">
-  <div><span>1</span><b>Replay</b><p>Request → Grant triggered TURN_FAILURE</p></div>
-  <div><span>2</span><b>Classify</b><p>Monitor synchronization error</p></div>
-  <div><span>3</span><b>Repair</b><p>Use explicit system/environment waits</p></div>
-  <div><span>4</span><b>Reverify</b><p>Keep the environment fully open</p></div>
+  <div><span>1</span><b>Replay</b><p>Late 401 forces token refresh</p></div>
+  <div><span>2</span><b>Infer</b><p>Refresh invalidates session S1</p></div>
+  <div><span>3</span><b>Repair</b><p>Create S2 and restart chunk 1</p></div>
+  <div><span>4</span><b>Reverify</b><p>Preserve all legal status choices</p></div>
 </div>
 
-<div class="integrity-callout">The repair changed the observer, not the legal game.</div>
-
-<!--
-[Sources]
-- Local experiment: runs/fresh-agent-002/strategy.md
--->
+<div class="integrity-callout">No server response was removed. Only the controller's recovery branch changed.</div>
 
 ---
 
-# The repaired strategy survives the worst branch
+# The repaired policy survives the worst legal branch
 
-<WarehouseTrace src="/traces/verified-success.json" accent="#37d67a" />
+<RestTrace src="/traces/verified-success.json" accent="#37d67a" />
 
-<div class="footnote">The environment spends its only denial immediately. The controller retries, enters as soon as access is granted, and completes in six system events.</div>
-
-<!--
-[Sources]
-- Local model: runs/fresh-agent-002/warehouse-controller/spec/js/warehouse.js
--->
+<div class="footnote">The server spends both disruptions at maximum cost: 503 before creation and 401 after chunk 1.</div>
 
 ---
 
-# The final claim is bounded, explicit, and reproducible
+# The comparison is measurable
 
-<div class="result-layout">
-  <div class="result-mark">0</div>
-  <div class="result-copy">
-    <div class="result-label">FINAL VIOLATIONS</div>
-    <pre>INFO [VERIFY] Max DFS depth: 20
-INFO [VERIFY] No violations found.</pre>
-  </div>
+<div class="comparison-grid">
+  <div class="loser"><small>NAIVE RETRY</small><b>4</b><span>counterexamples</span><p>Ends in 409 after a legal authentication failure.</p></div>
+  <div class="winner"><small>VERIFIED RESTART</small><b>0</b><span>violations</span><p>Commits under every response sequence in the contract.</p></div>
 </div>
 
-<div class="metrics-line">
-  <span><b>9</b> system-event limit</span>
-  <span><b>6</b> worst-case system events</span>
-  <span><b>11</b> longest complete trace</span>
-  <span><b>20</b> verification depth</span>
-</div>
-
-<!--
-[Sources]
-- Local verification log: runs/fresh-agent-002/verification-repaired.log
--->
+<div class="metrics-line"><span><b>9</b> worst-case requests</span><span><b>18</b> longest complete trace</span><span><b>24</b> DFS depth</span></div>
 
 ---
 
-# This establishes the workflow—not yet the comparative advantage
+# What Provengo contributed
 
 <div class="next-grid">
-  <div class="done"><b>Established</b><p>A fresh agent translated stories, built a BProgram, diagnosed counterexamples, repaired the model, and reached a clean verification result.</p></div>
-  <div class="next"><b>Next experiment</b><p>Give the same hidden challenges and budgets to Provengo-guided and naive agents, then compare unsafe-controller and guaranteed-delivery rates.</p></div>
+  <div class="done"><b>Counterexample</b><p>It chose the precise response timing that defeats local retry logic.</p></div>
+  <div class="done"><b>Guarantee</b><p>It checked the repaired causal policy against every legal server selection.</p></div>
 </div>
 
-<div class="closing">The report is ready to add each future strategy as one trace JSON file.</div>
-
-<!--
-[Sources]
-- Experiment scope: report/README.md
--->
+<div class="closing">The difference is strategic: retry one request, or restart invalid transactional state.</div>

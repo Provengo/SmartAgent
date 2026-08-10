@@ -1,120 +1,40 @@
-# Provengo Smart Agent Controller Demonstration
+# Provengo Smart Agent: verified REST recovery
 
-This repository is an experimental demonstration of an AI agent using Behavioral Programming and Provengo verification to design a controller for an adversarial robotics problem.
+This repository demonstrates an AI-agent workflow for planning a controller against every legal response of a REST server. The benchmark is deliberately direct: controller events are HTTP requests, environment events are HTTP status responses, and the Behavioral Program encodes the API contract without a robotics abstraction layer.
 
-The central research question is:
+## Live report
 
-> Under equal development constraints, can a Provengo-guided agent produce safer and more robust controllers than an otherwise identical agent working without Provengo?
+[Open the animated Slidev presentation](https://provengo.github.io/SmartAgent/)
 
-This first benchmark establishes the Provengo-guided workflow. A fresh agent translated event stories into a BProgram, devised a causal controller strategy, ran formal verification, diagnosed verifier counterexamples, repaired the model, and verified again.
+The presentation replays both the verifier counterexample and the verified worst-case recovery while showing token generation, session validity, and uploaded chunks.
 
-[**Launch the live interactive presentation →**](https://provengo.github.io/SmartAgent/)<br>
-[**Open the evidence report →**](report/README.md)
+## Result
 
-![Overview of the animated report](report/rendered-montage.png)
+| Controller | Provengo result | Meaning |
+|---|---:|---|
+| Naive: refresh and retry the failed chunk in the old session | 4 violations | A legal late `401` leads to `409 Invalid Session` |
+| Repaired: refresh, create a new session, and re-upload all chunks | 0 violations | Successful commit for every legal response sequence |
 
-## Verified result
+Provengo verification used DFS depth 24. The longest complete play has 18 events—9 requests and 9 responses—so the bound covers the complete finite benchmark.
 
-The final controller passed bounded formal verification:
+## Repository map
 
-```text
-INFO [VERIFY] Max DFS depth: 20
-INFO [VERIFY] No violations found.
-```
-
-The longest complete play contains 11 selected events, while verification explored to depth 20.
-
-| Measure | Result |
-|---|---:|
-| Controller limit | 9 system events |
-| Worst-case strategy | 6 system events |
-| Longest complete play | 11 selected events |
-| Verification depth | 20 |
-| Final violations | 0 |
-
-## Repository portal
-
-### Interactive report
-
-- [Live Slidev presentation](https://provengo.github.io/SmartAgent/)
-- [Report and reproducibility guide](report/README.md)
-- [Slidev deck](report/slides.md)
-- [Interactive trace player](report/components/WarehouseTrace.vue)
-- [Monitor-failure trace](report/public/traces/monitor-failure.json)
-- [Verified success trace](report/public/traces/verified-success.json)
-
-### Controller-planning skill
-
-- [Skill instructions](skills/provengo-controller-planner/SKILL.md)
-- [Warehouse corridor challenge](skills/provengo-controller-planner/references/warehouse-corridor-challenge.md)
-- [Codex skill metadata](skills/provengo-controller-planner/agents/openai.yaml)
-
-### Fresh-agent evidence
-
-- [Verified agent report](runs/fresh-agent-002/strategy.md)
-- [Final BProgram](runs/fresh-agent-002/warehouse-controller/spec/js/warehouse.js)
-- [Successful verification log](runs/fresh-agent-002/verification-repaired.log)
-- [Counterexample report](runs/fresh-agent-002/verification-final.html)
-- [Initial non-verification run](runs/fresh-agent-001/strategy.md)
-
-## The benchmark
-
-An autonomous warehouse robot must travel from `STAGING` to `GOAL` through one of two forklift-controlled corridors. The controller selects robot events and the environment adversarially selects any response permitted by the stories.
-
-The verified strategy is:
-
-1. Request the `NORTH` corridor.
-2. If denied, request `NORTH` again.
-3. Enter immediately after a grant.
-4. Advance, exit, and deliver.
-
-Only one denial is legal. A mandatory response prevents forklift motion between request and grant or denial, and immediate entry prevents permit recall.
-
-## Counterexample-guided repair
-
-The first executable model produced two verifier counterexamples:
-
-```text
-Request(NORTH), Grant(NORTH) -> TURN_FAILURE
-Request(NORTH), Deny(NORTH)  -> TURN_FAILURE
-```
-
-These exposed a synchronization error in the independent turn monitor—not a controller loss. The fresh agent classified the error, repaired the monitor using explicit alternating waits, preserved the environment's legal choices, and reran verification successfully.
-
-## Run the animated report
-
-Requirements: Node.js 20.12 or later.
-
-```powershell
-cd report
-npm install
-npm run dev
-```
-
-The trace player supports play, pause, single-step, restart, and playback-speed controls.
-
-Build a static site suitable for GitHub Pages:
-
-```powershell
-cd report
-npm run build
-```
+- [`skills/provengo-controller-planner/SKILL.md`](skills/provengo-controller-planner/SKILL.md) — reusable agent workflow
+- [`rest-backup-challenge.md`](skills/provengo-controller-planner/references/rest-backup-challenge.md) — benchmark prompt and REST contract
+- [`runs/rest-backup-naive`](runs/rest-backup-naive) — failing strategy, BProgram, verifier report, and counterexamples
+- [`runs/rest-backup-verified`](runs/rest-backup-verified) — repaired strategy, BProgram, and successful verification evidence
+- [`report`](report) — Slidev source and interactive traces
 
 ## Reproduce verification
 
-The recorded experiment used:
-
-- Provengo CLI repository: `SeleniumBasedTests`
-- Branch: `verification_mode`
-- Commit: `aec262a0`
+The experiment uses the verification-capable Provengo CLI jar built from `C:\Users\geraw\provengo\SeleniumBasedTests`:
 
 ```powershell
-java -jar "C:\path\to\testory-c1-0.7.5-SNAPSHOT.uber.jar" `
-  --batch-mode --no-color verify --max-depth 20 `
-  -o "verification-repaired.html" `
-  "runs\fresh-agent-002\warehouse-controller"
+java -jar 'C:\Users\geraw\provengo\SeleniumBasedTests\target\testory-c1-0.7.5-SNAPSHOT.uber.jar' --batch-mode --no-color verify --max-depth 24 -o 'runs\rest-backup-naive\verification.html' 'runs\rest-backup-naive\rest-backup-controller'
+
+java -jar 'C:\Users\geraw\provengo\SeleniumBasedTests\target\testory-c1-0.7.5-SNAPSHOT.uber.jar' --batch-mode --no-color verify --max-depth 24 -o 'runs\rest-backup-verified\verification.html' 'runs\rest-backup-verified\rest-backup-controller'
 ```
 
-## Current scope
+## Scope of the claim
 
-This repository verifies the controller against every behavior encoded by the finite BProgram. It does not prove correctness outside that model. The current run establishes the Provengo-guided workflow; it does not yet contain the controlled multi-run comparison against naive agents needed to demonstrate comparative advantage statistically.
+The result proves the repaired controller against every response sequence allowed by this finite REST contract. It does not prove properties of an external production backup service whose behavior is not represented by the contract.

@@ -1,9 +1,0 @@
-{
- "servers": {
-        "techDemos": {
-            "type": "sse",
-            "url": "https://gitmcp.io/Provengo/TechDemos",
-        }
-
-    }
-}

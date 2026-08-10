@@ -1,0 +1,19 @@
+{
+  "title": "Naive retry reuses invalid state",
+  "result": "failure",
+  "violation": "409 Invalid Session",
+  "events": [
+    {"owner":"client","name":"POST /backup-sessions","note":"Create session S1 under token generation T0"},
+    {"owner":"server","name":"201 Created (session)","note":"S1 is active"},
+    {"owner":"client","name":"PUT /backup-sessions/current/chunks/1","note":"Upload chunk 1 to S1"},
+    {"owner":"server","name":"204 No Content","note":"Chunk 1 accepted"},
+    {"owner":"client","name":"PUT /backup-sessions/current/chunks/2","note":"Attempt chunk 2"},
+    {"owner":"server","name":"401 Unauthorized","note":"The server spends its one allowed auth failure"},
+    {"owner":"client","name":"POST /auth/refresh","note":"Naive recovery refreshes the token"},
+    {"owner":"server","name":"200 OK (token refreshed)","note":"Token becomes T1; S1 is now invalid"},
+    {"owner":"client","name":"PUT /backup-sessions/current/chunks/2","note":"Retry only the failed chunk in stale S1"},
+    {"owner":"server","name":"204 No Content","note":"Upload acceptance does not revalidate S1"},
+    {"owner":"client","name":"POST /backup-sessions/current/commit","note":"Commit the reused session"},
+    {"owner":"server","name":"409 Invalid Session","note":"Provengo's counterexample: S1 belongs to T0"}
+  ]
+}

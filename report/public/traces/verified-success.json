@@ -1,18 +1,25 @@
 {
-  "title": "Verified worst-case strategy trace",
+  "title": "Verified worst-case recovery",
   "result": "success",
   "violation": null,
   "events": [
-    {"owner":"system","name":"Request(NORTH)","note":"Request exclusive access"},
-    {"owner":"environment","name":"Deny(NORTH)","note":"The environment spends its sole denial"},
-    {"owner":"system","name":"Request(NORTH)","note":"Retry the same empty corridor"},
-    {"owner":"environment","name":"Grant(NORTH)","note":"A second denial is illegal"},
-    {"owner":"system","name":"Enter(NORTH)","note":"Immediate entry prevents recall"},
-    {"owner":"environment","name":"NoChange","note":"North is protected by the active permit"},
-    {"owner":"system","name":"Advance(NORTH)","note":"Move to the far end"},
-    {"owner":"environment","name":"NoChange","note":"No legal interference in north"},
-    {"owner":"system","name":"Exit(NORTH)","note":"Reach the goal"},
-    {"owner":"environment","name":"NoChange","note":"Final response before delivery"},
-    {"owner":"system","name":"Deliver","note":"Mission complete"}
+    {"owner":"client","name":"POST /backup-sessions","note":"First creation attempt"},
+    {"owner":"server","name":"503 Service Unavailable","note":"The server spends its one allowed outage"},
+    {"owner":"client","name":"POST /backup-sessions","note":"Retry creation"},
+    {"owner":"server","name":"201 Created (session)","note":"Create S1 under T0"},
+    {"owner":"client","name":"PUT /backup-sessions/current/chunks/1","note":"Upload chunk 1"},
+    {"owner":"server","name":"204 No Content","note":"Chunk 1 accepted"},
+    {"owner":"client","name":"PUT /backup-sessions/current/chunks/2","note":"Upload chunk 2"},
+    {"owner":"server","name":"401 Unauthorized","note":"Late auth failure invalidates the useful work"},
+    {"owner":"client","name":"POST /auth/refresh","note":"Refresh authentication"},
+    {"owner":"server","name":"200 OK (token refreshed)","note":"Token becomes T1; abandon S1"},
+    {"owner":"client","name":"POST /backup-sessions","note":"Create a replacement session"},
+    {"owner":"server","name":"201 Created (session)","note":"Create S2 under T1"},
+    {"owner":"client","name":"PUT /backup-sessions/current/chunks/1","note":"Restart from chunk 1"},
+    {"owner":"server","name":"204 No Content","note":"Chunk 1 accepted in S2"},
+    {"owner":"client","name":"PUT /backup-sessions/current/chunks/2","note":"Upload chunk 2 in S2"},
+    {"owner":"server","name":"204 No Content","note":"Chunk 2 accepted in S2"},
+    {"owner":"client","name":"POST /backup-sessions/current/commit","note":"Commit the current complete session"},
+    {"owner":"server","name":"201 Created (backup committed)","note":"Goal reached in the 9-request worst case"}
   ]
 }

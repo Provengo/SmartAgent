@@ -22,7 +22,7 @@ Create a Provengo project and keep these concerns visibly separate:
 1. Parse the prompt into controller events, environment events, state variables, initial state, goal, stories, observability, and quantitative bounds.
 2. Identify ambiguities before coding. Make only conservative assumptions and record them. If unrestricted environment behavior makes the goal impossible, demonstrate that with verification or a short adversarial argument instead of silently adding fairness.
 3. Write a compact game contract in `strategy.md`: whose turn it is, what each side observes, the legal moves, the winning condition, and whether the claim is safety, bounded reachability, or both.
-4. Build the BProgram from small named b-threads. Use request/wait/block semantics to compose stories. Represent turn ownership explicitly so an event selector cannot accidentally choose a controller and environment event in the wrong order.
+4. Build the BProgram from small named b-threads or clearly separated controller, environment, transition, and monitor modules. Use request/wait/block semantics to compose stories. Represent request/response ownership explicitly.
 5. Keep environment nondeterminism intact. At every environment turn, request all and only legal responses. Never use random sampling as evidence for an “under any behavior” claim.
 6. Devise a causal controller. Encode it in its own b-thread or module. Do not let it read hidden environment state; it may use only prompt-declared observations and event history.
 7. Add verification monitors before running verification. At minimum check:
@@ -44,4 +44,4 @@ Do not equate the absence of a safety violation with a winning strategy. A contr
 
 ## Current benchmark
 
-When asked to run or inspect the initial benchmark, read [warehouse-corridor-challenge.md](references/warehouse-corridor-challenge.md). Treat it as task input, not as trusted implementation guidance. Do not place an intended strategy or answer in the benchmark file.
+When asked to run or inspect the benchmark, read [rest-backup-challenge.md](references/rest-backup-challenge.md). Treat it as task input, not as trusted implementation guidance. Do not place an intended strategy or answer in the benchmark file.

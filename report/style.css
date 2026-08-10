@@ -25,3 +25,10 @@
 .next-grid>div { padding-top:1.2rem; border-top:4px solid; font-size:1.12rem; line-height:1.5; }
 .next-grid .done { border-color:var(--green); } .next-grid .next { border-color:var(--amber); }
 .next-grid b { font-size:1.35rem; } .next-grid p { color:#c7d4e8; }
+.comparison-grid { display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:2rem; }
+.comparison-grid>div { padding:1.4rem;background:rgba(17,29,48,.8);border-top:4px solid;display:grid;grid-template-columns:1fr auto; }
+.comparison-grid small { letter-spacing:.14em;color:var(--muted); }
+.comparison-grid b { grid-row:1/3;grid-column:2;font-size:5rem;line-height:.9; }
+.comparison-grid span { color:var(--muted); }.comparison-grid p { grid-column:1/3;color:#c7d4e8; }
+.comparison-grid .loser { border-color:var(--red); }.comparison-grid .loser b { color:var(--red); }
+.comparison-grid .winner { border-color:var(--green); }.comparison-grid .winner b { color:var(--green); }
