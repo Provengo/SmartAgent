@@ -4,9 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "slidev --open",
-    "build": "slidev build",
-    "build:github": "slidev build --base /SmartAgent/",
-    "build:sites": "slidev build && node scripts/prepare-sites-build.mjs",
+    "build": "slidev build --base /SmartAgent/",
     "export": "slidev export --with-clicks"
   },
   "dependencies": {

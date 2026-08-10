@@ -25,7 +25,7 @@ The longest complete play contains 11 selected events, so the depth-20 search co
 
 The Slidev presentation replays the counterexample and successful strategy as controllable animations:
 
-[**Launch the live interactive presentation →**](https://provengo-smart-agent-report.geraweiss.chatgpt.site)
+[**Launch the live interactive presentation →**](https://provengo.github.io/SmartAgent/)
 
 ```powershell
 cd report
@@ -33,7 +33,7 @@ npm install
 npm run dev
 ```
 
-Use the on-screen controls to play, pause, step, restart, or change playback speed. The presentation is hosted privately while the source repository remains private.
+Use the on-screen controls to play, pause, step, restart, or change playback speed. The presentation is deployed automatically to GitHub Pages from `main`.
 
 ## What failed first
 
