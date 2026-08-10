@@ -4,3 +4,8 @@ L2,baseline,1,PASS,6,0,blind direct-retry policy checked by Provengo
 L2,guided,1,PASS,9,0,restart-after-refresh policy checked by Provengo
 L3,baseline,1,ARGUED_PASS,12,,first blind answer; formal encoding pending
 L4,guided,1,PASS,14,0,complete DFS depth 28
+L4,baseline,1,ARGUED_PASS,14,,formal encoding pending
+L4,baseline,2,ARGUED_PASS,14,,formal encoding pending; extra conditional status read
+L4,baseline,3,ARGUED_PASS,14,,formal encoding pending; restore-409-create branch
+L4,baseline,4,ARGUED_PASS,14,,formal encoding pending
+L4,baseline,5,ARGUED_PASS,14,,formal encoding pending
