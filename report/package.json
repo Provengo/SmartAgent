@@ -1,0 +1,18 @@
+{
+  "name": "provengo-controller-report",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "slidev --open",
+    "build": "slidev build --base /provengo-controller-report/",
+    "export": "slidev export --with-clicks"
+  },
+  "dependencies": {
+    "@slidev/cli": "52.18.0",
+    "@slidev/theme-default": "latest",
+    "vue": "latest"
+  },
+  "devDependencies": {
+    "playwright-chromium": "^1.62.1"
+  }
+}

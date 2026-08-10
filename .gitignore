@@ -1,0 +1,9 @@
+**/node_modules/
+**/dist/
+**/.slidev/
+runs/fresh-agent-001/jar-inspect/
+report/slidev-dev*.log
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db

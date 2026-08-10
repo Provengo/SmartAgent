@@ -1,0 +1,18 @@
+{
+  "title": "Verified worst-case strategy trace",
+  "result": "success",
+  "violation": null,
+  "events": [
+    {"owner":"system","name":"Request(NORTH)","note":"Request exclusive access"},
+    {"owner":"environment","name":"Deny(NORTH)","note":"The environment spends its sole denial"},
+    {"owner":"system","name":"Request(NORTH)","note":"Retry the same empty corridor"},
+    {"owner":"environment","name":"Grant(NORTH)","note":"A second denial is illegal"},
+    {"owner":"system","name":"Enter(NORTH)","note":"Immediate entry prevents recall"},
+    {"owner":"environment","name":"NoChange","note":"North is protected by the active permit"},
+    {"owner":"system","name":"Advance(NORTH)","note":"Move to the far end"},
+    {"owner":"environment","name":"NoChange","note":"No legal interference in north"},
+    {"owner":"system","name":"Exit(NORTH)","note":"Reach the goal"},
+    {"owner":"environment","name":"NoChange","note":"Final response before delivery"},
+    {"owner":"system","name":"Deliver","note":"Mission complete"}
+  ]
+}

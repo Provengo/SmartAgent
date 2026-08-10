@@ -1,0 +1,10 @@
+{
+  "title": "Verifier counterexample: broken turn monitor",
+  "result": "failure",
+  "violation": "TURN_FAILURE: expected ENVIRONMENT, selected Request(NORTH)",
+  "events": [
+    {"owner":"system","name":"Request(NORTH)","note":"Controller requests the north corridor"},
+    {"owner":"environment","name":"Grant(NORTH)","note":"Dispatcher grants the request"},
+    {"owner":"verifier","name":"TURN_FAILURE","note":"The monitor advances out of phase"}
+  ]
+}

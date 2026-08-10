@@ -1,0 +1,4 @@
+interface:
+  display_name: "Provengo Controller Planner"
+  short_description: "Design and verify adversarial BP controllers"
+  default_prompt: "Use $provengo-controller-planner to translate this controller challenge into a verified Provengo BProgram and strategy."
