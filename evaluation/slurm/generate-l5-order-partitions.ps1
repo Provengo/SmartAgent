@@ -25,6 +25,9 @@ $index = 0
 foreach ($order in @(Get-Permutations $items)) {
   $label = "order-{0:d2}-{1}" -f $index, (($order -join "-").ToLower())
   $destination = Join-Path $OutputRoot $label
+  if (Test-Path -LiteralPath $destination) {
+    Remove-Item -Recurse -Force -LiteralPath $destination
+  }
   Copy-Item -Recurse -Force $source $destination
   $modelPath = Join-Path $destination $modelRelative
   $model = Get-Content -Raw $modelPath
