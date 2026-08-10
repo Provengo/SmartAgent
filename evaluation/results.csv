@@ -3,3 +3,4 @@ L1,baseline,1,PASS,6,0,blind reasoning later checked by Provengo
 L2,baseline,1,PASS,6,0,blind direct-retry policy checked by Provengo
 L2,guided,1,PASS,9,0,restart-after-refresh policy checked by Provengo
 L3,baseline,1,ARGUED_PASS,12,,first blind answer; formal encoding pending
+L4,guided,1,PASS,14,0,complete DFS depth 28
