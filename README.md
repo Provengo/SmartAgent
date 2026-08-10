@@ -8,8 +8,8 @@ The central research question is:
 
 This first benchmark establishes the Provengo-guided workflow. A fresh agent translated event stories into a BProgram, devised a causal controller strategy, ran formal verification, diagnosed verifier counterexamples, repaired the model, and verified again.
 
-[**Open the evidence report →**](report/README.md)<br>
-[**Open the Slidev presentation source →**](report/slides.md)
+[**Launch the live interactive presentation →**](https://provengo.github.io/SmartAgent/)<br>
+[**Open the evidence report →**](report/README.md)
 
 ![Overview of the animated report](report/rendered-montage.png)
 
@@ -36,6 +36,7 @@ The longest complete play contains 11 selected events, while verification explor
 
 ### Interactive report
 
+- [Live Slidev presentation](https://provengo.github.io/SmartAgent/)
 - [Report and reproducibility guide](report/README.md)
 - [Slidev deck](report/slides.md)
 - [Interactive trace player](report/components/WarehouseTrace.vue)

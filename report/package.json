@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "slidev --open",
-    "build": "slidev build --base /provengo-controller-report/",
+    "build": "slidev build --base /SmartAgent/",
     "export": "slidev export --with-clicks"
   },
   "dependencies": {
