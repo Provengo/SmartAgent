@@ -1,8 +1,20 @@
-# L5 guided verification summary
+# L5 guided verification summary — invalidated
+
+> **Correction:** the earlier “verified to depth 36” conclusion is not a proof
+> of the 18-request bound.  The nineteenth request is selected at event depth
+> 37.  Verification at depth 38 found bounded-reachability violations.  L5 is
+> retained as diagnostic evidence and must not be reported as a Provengo win.
 
 ## Result
 
-The checkpoint-at-prefix-1 strategy passed exhaustive verification to depth 36, corresponding to the complete 18-request bound: **no violations were found**.
+The checkpoint-at-prefix-1 strategy passed to depth 36, but that depth was two
+events too shallow to test a nineteenth request.  At depth 38, order partition
+00 found six violations in job `20008069`.  Two attempted adaptive repairs also
+failed; jobs `20008239` and `20008304` found six and four violations.
+
+The counterexamples reach the nineteenth request through legal combinations of
+expiry, ambiguous timeout, and quota invalidation.  Their reports are stored in
+`evaluation/slurm/results/l5-depth38-counterexample/`.
 
 The unrestricted search demonstrated the state-space growth directly:
 
@@ -21,7 +33,10 @@ For the complete proof, the environment was partitioned by the relative order of
 
 Within a partition, the server may emit the next disruption at any legal opportunity or omit it. Consequently, every legal unrestricted execution is included in at least one partition: list the disruptions that actually occur in their observed order, then extend that sequence arbitrarily to a permutation of all four types. The execution is a trace of that partition. The quota partition retains both possible victims, A and B.
 
-All 24 partitions were checked to depth 36. Each reported `No violations found`. This covers both safety assertions and failure to commit within 18 client requests.
+All 24 partitions reported no violations at depth 36. This covers safety only
+through that depth; it does **not** cover failure to commit within 18 requests.
+For that property the search must reach at least depth 37.  The depth-38 rerun
+invalidated the claimed bound.
 
 ## SLURM execution
 

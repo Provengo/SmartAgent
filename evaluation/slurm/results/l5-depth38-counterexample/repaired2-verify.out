@@ -1,0 +1,28 @@
+------------------------------------
+Tue 11 Aug 2026 00:37:06 IDT
+SLURM_JOBID:		20008304
+SLURM_JOB_NODELIST:	ise-cpu-intl-13
+SLURM_SCRATCH_DIR:	
+Allocated Resouces:	cpu - 2 / mem - 16384 MB / gpu - 
+SLURM_GPU_INDEX:	
+Running as geraw from geraw account with normal QOS
+------------------------------------
+label=order-00-503-401-504-quota
+node=ise-cpu-intl-13.auth.ad.bgu.ac.il
+depth=38
+project=evaluation/levels/L5-coupled-backups/guided/order-partitions/order-00-503-401-504-quota
+        / /
+     /\/ /   ____
+  /\/ /\/ / |  _ \ _ __  _____   __ ___  _ __   __ _  ___
+ /  \/\/\/  | |_) | '__|/ _ \ \ / // _ \| '_ \ / _` |/ _ \
+ \  /\/\/\  |  __/| |  | (_) \ V /|  __/| | | | (_| | (_) |
+  \/\ \/\ \ |_|   |_|   \___/ \_/  \___||_| |_|\__, |\___/
+     \/\ \                                     |___/
+        \ \
+
+00:37:07.951 INFO [SETUP] We'd love to hear from you! hello@provengo.tech or http://feedback.provengo.tech/
+00:37:07.969 INFO [SETUP] Project path: /home/geraw/provengo-smart-agent/bundles/l5-repaired/evaluation/levels/L5-coupled-backups/guided/order-partitions/order-00-503-401-504-quota
+00:37:08.164 INFO [VERIFY] Max DFS depth: 38
+00:41:08.501 INFO [VERIFY] Found 4 violation(s).
+00:41:09.033 INFO [VERIFY] Verification report written to /home/geraw/provengo-smart-agent/results/20008304_0-order-00-503-401-504-quota.html
+elapsed_seconds=243

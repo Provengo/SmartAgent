@@ -2,10 +2,10 @@
 const REQUESTS = any(/^(POST|PUT|GET) \/.*/);
 const RESPONSES = any(/^(200|201|204|401|409|503|504) /);
 
-function chooseWork(pA,pB,hasCheckpoint) {
+function chooseWork(pA,pB,hasCheckpoint,expirySeen) {
   if (pA<1) return "UPLOAD_A";
   if (pB<1) return "UPLOAD_B";
-  if (!hasCheckpoint) return "CHECKPOINT";
+  if (!hasCheckpoint && !expirySeen) return "CHECKPOINT";
   if (pA<2) return "UPLOAD_A";
   if (pB<2) return "UPLOAD_B";
   return "COMMIT";
@@ -13,10 +13,12 @@ function chooseWork(pA,pB,hasCheckpoint) {
 
 bthread("Guided coupled-backup controller", function () {
   let phase="CREATE_A", pA=0, pB=0, cpA=0, cpB=0;
-  let hasCheckpoint=false, lastTarget="", ambiguousTarget="", observed;
+  let hasCheckpoint=false, expirySeen=false, lastTarget="", ambiguousTarget="", observed;
   while (true) {
     if (phase==="CREATE_A") bp.sync({request:E("POST /sessions/A"),block:RESPONSES});
     else if (phase==="CREATE_B") bp.sync({request:E("POST /sessions/B"),block:RESPONSES});
+    else if (phase==="RECREATE_A") bp.sync({request:E("POST /sessions/A"),block:RESPONSES});
+    else if (phase==="RECREATE_B") bp.sync({request:E("POST /sessions/B"),block:RESPONSES});
     else if (phase==="UPLOAD_A") { lastTarget="A"; bp.sync({request:E("PUT /sessions/A/chunks/"+(pA+1)),block:RESPONSES}); }
     else if (phase==="UPLOAD_B") { lastTarget="B"; bp.sync({request:E("PUT /sessions/B/chunks/"+(pB+1)),block:RESPONSES}); }
     else if (phase==="STATUS") bp.sync({request:E("GET /sessions/"+ambiguousTarget+"/status"),block:RESPONSES});
@@ -27,29 +29,32 @@ bthread("Guided coupled-backup controller", function () {
 
     observed=bp.sync({waitFor:RESPONSES,block:REQUESTS});
     if (observed.name.equals("503 Service Unavailable")) { /* repeat current create */ }
-    else if (observed.name.equals("201 Created (A)")) phase="CREATE_B";
-    else if (observed.name.equals("201 Created (B)")) phase=chooseWork(pA,pB,hasCheckpoint);
+    else if (observed.name.equals("201 Created (A)")) phase=phase==="CREATE_A" ? "CREATE_B" : chooseWork(pA,pB,hasCheckpoint,expirySeen);
+    else if (observed.name.equals("201 Created (B)")) phase=chooseWork(pA,pB,hasCheckpoint,expirySeen);
     else if (observed.name.equals("204 No Content")) {
       if (lastTarget==="A") pA++; else pB++;
-      phase=chooseWork(pA,pB,hasCheckpoint);
+      phase=chooseWork(pA,pB,hasCheckpoint,expirySeen);
     } else if (observed.name.equals("504 Gateway Timeout")) {
       ambiguousTarget=lastTarget; phase="STATUS";
     } else if (observed.name.indexOf("200 A Prefix(")===0) {
-      pA=parseInt(observed.name.substring(13)); phase=chooseWork(pA,pB,hasCheckpoint);
+      pA=parseInt(observed.name.substring(13)); phase=chooseWork(pA,pB,hasCheckpoint,expirySeen);
     } else if (observed.name.indexOf("200 B Prefix(")===0) {
-      pB=parseInt(observed.name.substring(13)); phase=chooseWork(pA,pB,hasCheckpoint);
+      pB=parseInt(observed.name.substring(13)); phase=chooseWork(pA,pB,hasCheckpoint,expirySeen);
     } else if (observed.name.equals("401 Unauthorized")) phase="REFRESH";
     else if (observed.name.equals("200 OK (token refreshed)")) {
+      expirySeen=true;
       if (hasCheckpoint) phase="RESTORE";
       else { pA=0; pB=0; phase="CREATE_A"; }
     } else if (observed.name.equals("201 Checkpointed")) {
-      hasCheckpoint=true; cpA=pA; cpB=pB; phase=chooseWork(pA,pB,hasCheckpoint);
+      hasCheckpoint=true; cpA=pA; cpB=pB; phase=chooseWork(pA,pB,hasCheckpoint,expirySeen);
     } else if (observed.name.equals("201 Restored")) {
-      pA=cpA; pB=cpB; phase=chooseWork(pA,pB,hasCheckpoint);
+      pA=cpA; pB=cpB; phase=chooseWork(pA,pB,hasCheckpoint,expirySeen);
     } else if (observed.name.equals("409 QuotaRebalance(A)")) {
-      if (hasCheckpoint) phase="RESTORE"; else { pA=0; phase="CREATE_A"; }
+      if (hasCheckpoint && 1+(pA-cpA)+(pB-cpB) <= 1+pA) phase="RESTORE";
+      else { pA=0; phase="RECREATE_A"; }
     } else if (observed.name.equals("409 QuotaRebalance(B)")) {
-      if (hasCheckpoint) phase="RESTORE"; else { pB=0; phase="CREATE_B"; }
+      if (hasCheckpoint && 1+(pA-cpA)+(pB-cpB) <= 1+pB) phase="RESTORE";
+      else { pB=0; phase="RECREATE_B"; }
     } else if (observed.name.equals("201 Committed")) break;
     else bp.ASSERT(false,"STRATEGY_FAILURE: "+observed.name);
   }
