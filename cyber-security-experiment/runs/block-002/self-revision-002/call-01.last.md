@@ -1,0 +1,1 @@
+Implemented and syntax-validated [controller.js](C:\Users\geraw\provengo\SmartAgent\cyber-security-experiment\runs\block-002\self-revision-002\controller.js). It uses deterministic checkpoint/restore handling for all contract disruptions and stops after traffic reopens.

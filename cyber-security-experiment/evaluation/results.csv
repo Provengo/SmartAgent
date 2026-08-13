@@ -1,0 +1,4 @@
+trial_id,level,condition,model,reasoning_effort,prompt_sha256,status,violations,unsafe_declaration,bound_exceeded,uncovered_branches,actions_worst_case,repairs,tokens,elapsed_seconds,artifact_path,notes
+pilot-001,C2,one-shot,gpt-5.6-terra,default,e2e77d7ff98eceb66fded99cb76c879ce497866261f3c08d9abe496bb13b748c,INVALID,,,,,,0,162848,,runs/pilot-20260813/one-shot-001,DFS snapshot clone failed because candidate stored NativeRegExp state
+pilot-001,C2,self-revision,gpt-5.6-terra,default,e2e77d7ff98eceb66fded99cb76c879ce497866261f3c08d9abe496bb13b748c,PASS,0,false,false,0,,0,192821,,runs/pilot-20260813/self-revision-001,Verified on call 1 across all 24 partitions at depth 42
+pilot-001,C2,cegis,gpt-5.6-terra,default,e2e77d7ff98eceb66fded99cb76c879ce497866261f3c08d9abe496bb13b748c,PASS,0,false,false,0,,1,422366,,runs/pilot-20260813/cegis-001,Call 1 exceeded bound; call 2 passed all 24 partitions after canonical counterexample

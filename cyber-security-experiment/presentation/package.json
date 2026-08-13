@@ -1,0 +1,14 @@
+{
+  "name": "cyber-cegis-experiment-presentation",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "slidev --port 3031",
+    "build": "slidev build"
+  },
+  "dependencies": {
+    "@slidev/cli": "52.18.0",
+    "@slidev/theme-default": "latest",
+    "vue": "latest"
+  }
+}

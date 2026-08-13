@@ -1,0 +1,1 @@
+Implemented and syntax-checked [controller.js](C:\Users\geraw\provengo\SmartAgent\cyber-security-experiment\runs\block-003\self-revision-003\controller.js). It tracks only observed state, resolves timeouts via status, handles compromise/rotation and evictions, and stops immediately after traffic reopens.

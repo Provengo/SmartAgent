@@ -1,0 +1,3 @@
+Replaced [controller.js](C:\Users\geraw\provengo\SmartAgent\cyber-security-experiment\runs\block-002\self-revision-002\controller.js) with a complete deterministic controller.
+
+It covers flood retry, timeout/status resolution, credential rotation plus restore, arbitrary eviction restoration, atomic snapshots, and safe reopen termination. The worst-case request bound is documented as 20. Syntax validation passed.

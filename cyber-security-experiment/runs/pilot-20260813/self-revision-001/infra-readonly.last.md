@@ -1,0 +1,1 @@
+Blocked: this workspace is read-only, so I cannot create `controller.js`. The required artifact was not written.

@@ -1,0 +1,1 @@
+Implemented and syntax-validated [controller.js](C:\Users\geraw\provengo\SmartAgent\cyber-security-experiment\runs\pilot-20260813\cegis-001\controller.js). It uses deterministic local state, observes timeout status before proceeding, recovers 401/eviction via checkpoints, and stops after traffic reopens.
