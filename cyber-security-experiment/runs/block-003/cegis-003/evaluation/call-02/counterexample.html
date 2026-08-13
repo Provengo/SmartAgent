@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Provengo Verification Report</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="https://content.provengo.tech/v2/css-dist/reset.min.css">
+        <link rel="stylesheet" type="text/css" href="https://content.provengo.tech/v2/css-dist/vars.min.css">
+        <link rel="stylesheet" type="text/css" href="https://content.provengo.tech/v2/css-dist/base.min.css">
+            <link rel="stylesheet" type="text/css" href="https://content.provengo.tech/v2/css-dist/components.min.css">
+            <link rel="stylesheet" type="text/css" href="https://content.provengo.tech/v2/css-dist/verification.min.css">
+    <script>
+function toggleDisplay(id, callerEmt) {
+    const emt = document.getElementById(id);
+    if ( emt ) {
+        const currentDisplay = emt.style.display;
+        if ( currentDisplay !== "none" ) {
+            emt.dataset.toggleDisplay = currentDisplay;
+            emt.style.display = "none";
+            if ( callerEmt ) callerEmt.innerText = "Show More";
+        } else {
+            emt.style.display = emt.dataset.toggleDisplay || "block";
+            if ( callerEmt ) callerEmt.innerText = "Show Less";
+        }
+    } else {
+        console.warn("toggleDisplay: Element " + id + " not found.");
+    }
+}
+
+function tail(a){ let x=Array.from(a); x.shift(); return x; }
+
+const TRI_STATE_STATES = ["false", "neutral", "true"];
+
+function makeTriState( emt, callback ) {
+    let switchButton = emt.querySelector(".switch-button");
+    let switchIndicator = emt.querySelector(".switch-indicator");
+    
+    let getCurrentValue = function(){
+        return emt.dataset.state;
+    };
+    let setCurrentValue = function( newValue ) {
+        let newValueIdx = newValue;
+        if ( typeof newValueIdx === "string" ) {
+            newValueIdx = TRI_STATE_STATES.indexOf(newValue);
+        }
+        let prevStateIdx = TRI_STATE_STATES.indexOf(emt.dataset.state);
+        switchButton.classList.remove(TRI_STATE_STATES[prevStateIdx]);
+        switchIndicator.classList.remove(TRI_STATE_STATES[prevStateIdx]);
+        switchButton.classList.add(TRI_STATE_STATES[newValueIdx]);
+        switchIndicator.classList.add(TRI_STATE_STATES[newValueIdx]);
+        
+        emt.dataset.state = TRI_STATE_STATES[newValueIdx];
+        if ( callback ) callback( emt, emt.dataset.state );
+        
+    };
+    
+    let rotateValue = function(){
+        let currentValueIdx = TRI_STATE_STATES.indexOf(getCurrentValue());
+        let nextValue = (currentValueIdx+1)%TRI_STATE_STATES.length;
+        setCurrentValue(nextValue);
+    };
+    
+    emt.addEventListener("click", function(e) {
+        let effX = e.clientX-emt.getBoundingClientRect().left;
+        let raw = (effX)/(emt.clientWidth);
+        let prevStateIdx = TRI_STATE_STATES.indexOf(emt.dataset.state);
+        let currentStateIdx = (raw<0.33333 ? 0 : (raw<0.6666 ? 1 : 2));
+        if ( currentStateIdx === prevStateIdx ) {
+          currentStateIdx = (prevStateIdx+1)%3;
+        }
+        switchButton.classList.remove(TRI_STATE_STATES[prevStateIdx]);
+        switchIndicator.classList.remove(TRI_STATE_STATES[prevStateIdx]);
+        switchButton.classList.add(TRI_STATE_STATES[currentStateIdx]);
+        switchIndicator.classList.add(TRI_STATE_STATES[currentStateIdx]);
+        
+        emt.dataset.state = TRI_STATE_STATES[currentStateIdx];
+        if ( callback ) callback( emt, emt.dataset.state );
+
+    });
+    
+    return {
+        getValue: getCurrentValue,
+        setValue: setCurrentValue,
+        rotateValue: rotateValue,
+        element: emt,
+        propertyName: emt.dataset.propertyName
+    };
+}    </script>
+</head><body>
+    <header class="verify-header">
+        <div class="verify-logo"><svg width="30" height="30" viewBox="0 0 644 644">
+ <path style="fill:none;stroke:currentColor;stroke-width:32;stroke-linecap:round;stroke-linejoin:round" d="M 10,318 103,226 486,609"/>
+ <path style="fill:none;stroke:currentColor;stroke-width:32;stroke-linecap:round;stroke-linejoin:round" d="M 10,318 103,412 486,31"/>
+ <path style="fill:none;stroke:currentColor;stroke-width:32;stroke-linecap:round;stroke-linejoin:round" d="M 123,245 270,97 634,459"/>
+ <path style="fill:none;stroke:currentColor;stroke-width:32;stroke-linecap:round;stroke-linejoin:round" d="M 123,393 270,540 634,175"/>
+ <path style="fill:none;stroke:currentColor;stroke-width:32;stroke-linecap:round;stroke-linejoin:round" d="M 273,393 634,31"/>
+ <path style="fill:none;stroke:currentColor;stroke-width:32;stroke-linecap:round;stroke-linejoin:round" d="M 273,245 634,609"/>
+</svg>
+ Provengo Verification Report</div>
+        <h1>
+                2 violations found
+        </h1>
+            <button id="toggleAllDetailsBtn" class="btn btn-sm" onclick="toggleAllEventData()">Show All Details</button>
+    </header>
+    <main class="container">
+        <section class="violation">
+            <h2>
+                Violation 1
+                    <span class="tag safety-tag">safety</span>
+            </h2>
+            <p class="description">Safety Violation: BOUNDED_REACHABILITY_FAILURE: more than 20 requests</p>
+            <h3 class="trace-heading">Counter-example trace</h3>
+            <ol class="trace">
+                <li class="trace-step">
+                        <div class="event-name">
+                            POST /mitigation/A
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            503 Control-plane flood
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            POST /mitigation/A
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            201 Created (A)
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            POST /mitigation/B
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            201 Created (B)
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            PUT /mitigation/A/stage/1
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            204 Applied
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            PUT /mitigation/A/stage/2
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            204 Applied
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            PUT /mitigation/B/stage/1
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            204 Applied
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            PUT /mitigation/B/stage/2
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            401 Credential compromised
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            POST /credentials/rotate
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            200 Rotated
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            POST /mitigation/A
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            201 Created (A)
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            POST /mitigation/B
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            201 Created (B)
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            PUT /mitigation/A/stage/1
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            504 Edge timeout
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            GET /mitigation/A/status
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            200 A Prefix(0)
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            PUT /mitigation/A/stage/1
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            204 Applied
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            PUT /mitigation/A/stage/2
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            204 Applied
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            PUT /mitigation/B/stage/1
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            409 Capacity eviction(A)
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            POST /mitigation/A
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            201 Created (A)
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            PUT /mitigation/A/stage/1
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            204 Applied
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            PUT /mitigation/A/stage/2
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            204 Applied
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            PUT /mitigation/B/stage/1
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            204 Applied
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            PUT /mitigation/B/stage/2
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            204 Applied
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            POST /traffic/reopen
+                        </div>
+                </li>
+                <li class="trace-step violation-point">
+                        <div class="event-name"><em>&#9888; Violation occurs in this state</em></div>
+                </li>
+            </ol>
+        </section>
+        <section class="violation">
+            <h2>
+                Violation 2
+                    <span class="tag safety-tag">safety</span>
+            </h2>
+            <p class="description">Safety Violation: BOUNDED_REACHABILITY_FAILURE: more than 20 requests</p>
+            <h3 class="trace-heading">Counter-example trace</h3>
+            <ol class="trace">
+                <li class="trace-step">
+                        <div class="event-name">
+                            POST /mitigation/A
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            503 Control-plane flood
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            POST /mitigation/A
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            201 Created (A)
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            POST /mitigation/B
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            201 Created (B)
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            PUT /mitigation/A/stage/1
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            204 Applied
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            PUT /mitigation/A/stage/2
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            204 Applied
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            PUT /mitigation/B/stage/1
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            204 Applied
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            PUT /mitigation/B/stage/2
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            401 Credential compromised
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            POST /credentials/rotate
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            200 Rotated
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            POST /mitigation/A
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            201 Created (A)
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            POST /mitigation/B
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            201 Created (B)
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            PUT /mitigation/A/stage/1
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            204 Applied
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            PUT /mitigation/A/stage/2
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            204 Applied
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            PUT /mitigation/B/stage/1
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            204 Applied
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            PUT /mitigation/B/stage/2
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            504 Edge timeout
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            GET /mitigation/B/status
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            200 B Prefix(1)
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            PUT /mitigation/B/stage/2
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            409 Capacity eviction(A)
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            POST /mitigation/A
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            201 Created (A)
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            PUT /mitigation/A/stage/1
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            204 Applied
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            PUT /mitigation/A/stage/2
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            204 Applied
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            PUT /mitigation/B/stage/2
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            204 Applied
+                        </div>
+                </li>
+                <li class="trace-step">
+                        <div class="event-name">
+                            POST /traffic/reopen
+                        </div>
+                </li>
+                <li class="trace-step violation-point">
+                        <div class="event-name"><em>&#9888; Violation occurs in this state</em></div>
+                </li>
+            </ol>
+        </section>
+    </main>
+    <footer>
+        <div class="container">
+            <div>2026-08-13 12:32:15</div>
+            <div>Created with <a href="https://provengo.ai/?utm=log" target="_blank"><svg width="24" height="24" viewBox="0 0 644 644">
+ <path style="fill:none;stroke:currentColor;stroke-width:32;stroke-linecap:round;stroke-linejoin:round" d="M 10,318 103,226 486,609"/>
+ <path style="fill:none;stroke:currentColor;stroke-width:32;stroke-linecap:round;stroke-linejoin:round" d="M 10,318 103,412 486,31"/>
+ <path style="fill:none;stroke:currentColor;stroke-width:32;stroke-linecap:round;stroke-linejoin:round" d="M 123,245 270,97 634,459"/>
+ <path style="fill:none;stroke:currentColor;stroke-width:32;stroke-linecap:round;stroke-linejoin:round" d="M 123,393 270,540 634,175"/>
+ <path style="fill:none;stroke:currentColor;stroke-width:32;stroke-linecap:round;stroke-linejoin:round" d="M 273,393 634,31"/>
+ <path style="fill:none;stroke:currentColor;stroke-width:32;stroke-linecap:round;stroke-linejoin:round" d="M 273,245 634,609"/>
+</svg>
+ Provengo</a></div>
+        </div>
+    </footer>
+            <script>
+let allDetailsShown = false;
+
+function toggleAllEventData() {
+    allDetailsShown = !allDetailsShown;
+    const newDisplay = allDetailsShown ? "block" : "none";
+    const newLabel = allDetailsShown ? "Show Less" : "Show More";
+
+    document.querySelectorAll(".event-data-wrap").forEach(function (emt) {
+        emt.style.display = newDisplay;
+        emt.dataset.toggleDisplay = "block";
+    });
+    document.querySelectorAll(".event-data-toggle").forEach(function (btn) {
+        btn.innerText = newLabel;
+    });
+
+    const allBtn = document.getElementById("toggleAllDetailsBtn");
+    if (allBtn) {
+        allBtn.innerText = allDetailsShown ? "Hide All Details" : "Show All Details";
+        allBtn.classList.toggle("btn-selected", allDetailsShown);
+    }
+}
+            </script>
+</body>
+</html>

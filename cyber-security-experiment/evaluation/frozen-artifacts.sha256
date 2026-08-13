@@ -1,0 +1,6 @@
+# C2.2 frozen on 2026-08-13: blind neutral first-controller interface.
+# Earlier C2/C2.1 runs are diagnostic pilots and excluded from primary results.
+e2e77d7ff98eceb66fded99cb76c879ce497866261f3c08d9abe496bb13b748c  cyber-security-experiment/benchmark/target-challenge.md
+d78d7bb67c04f4c0936a36dcc2815f4252fa88e1b2ddd1cae00e566b35717310  cyber-security-experiment/evaluation/neutral-controller-interface.md
+214e4a2bc3586c7ede19a795745af76fc502273665de647877a6a601d786ca2f  cyber-security-experiment/evaluation/harness/neutral-runtime.js
+f5fc11e9f93fa3bb9853477ec0d9b9358ebe86ee5038091c3d6a6d32fa3e6e64  cyber-security-experiment/evaluation/harness/open-attacker.js

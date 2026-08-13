@@ -1,0 +1,1 @@
+I couldn’t create `controller.js`: this run’s filesystem is read-only, and the write was blocked by the sandbox. Please rerun with workspace-write access.

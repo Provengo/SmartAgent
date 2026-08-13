@@ -1,0 +1,1 @@
+Implemented and syntax-validated [controller.js](C:\Users\geraw\provengo\SmartAgent\cyber-security-experiment\runs\pilot-20260813\one-shot-001\controller.js). It is a deterministic, response-driven BPjs controller with timeout resolution, credential recovery, checkpoint restoration, and bounded retry comments.

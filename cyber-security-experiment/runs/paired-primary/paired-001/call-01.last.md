@@ -1,0 +1,1 @@
+Implemented and syntax-validated the deterministic controller in [controller.js](C:\Users\geraw\provengo\SmartAgent\cyber-security-experiment\runs\paired-primary\paired-001\controller.js). It checkpoints confirmed state, resolves timeouts through status, recovers from rotation/eviction, and stops after traffic reopens.

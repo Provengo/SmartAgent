@@ -1,0 +1,1 @@
+trial_id,level,model,reasoning_effort,prompt_sha256,first_candidate_status,first_violation,final_status,total_calls,counterexamples,repairs,tokens,verifier_seconds,artifact_path,notes
